@@ -1,0 +1,209 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:provider/provider.dart';
+import 'package:seru_tech_test/provider/screen_two_provider.dart';
+import 'package:seru_tech_test/shared/theme.dart';
+import 'package:seru_tech_test/widgets/buttons.dart';
+
+class ScreenTwo extends StatefulWidget {
+  const ScreenTwo({Key? key}) : super(key: key);
+
+  @override
+  _ScreenTwoState createState() => _ScreenTwoState();
+}
+
+class _ScreenTwoState extends State<ScreenTwo> {
+  Future<void> _showFullScreenImage(File? imageFile) async {
+    if (imageFile != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FullScreenImage(imageFile: imageFile),
+        ),
+      );
+    }
+  }
+
+  Future<void> _getImage(ImageSource source, String type) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+
+    if (pickedFile != null) {
+      Provider.of<ScreenTwoProvider>(context, listen: false).setImage(
+        File(pickedFile.path),
+        type,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Screen 2"),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24,
+        ),
+        children: [
+          const SizedBox(
+            height: 30,
+          ),
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: lightBackgroundColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildImagePreview("Selfie", 'selfie'),
+                _buildImagePreview("KTP", 'ktp'),
+                _buildImagePreview("Foto Bebas", 'free'),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          CustomFilledButton(
+            title: 'Continue',
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const ScreenTwo(),
+              //   ),
+              // );
+            },
+          ),
+          const SizedBox(
+            height: 50,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePreview(String title, String type) {
+    return Consumer<ScreenTwoProvider>(
+      builder: (context, provider, child) {
+        File? imageFile;
+        switch (type) {
+          case 'selfie':
+            imageFile = provider.selfieImage;
+            break;
+          case 'ktp':
+            imageFile = provider.ktpImage;
+            break;
+          case 'free':
+            imageFile = provider.freeImage;
+            break;
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: blackTextStyle.copyWith(
+                fontSize: 18,
+                fontWeight: semibold,
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            GestureDetector(
+              onTap: () => _getImage(
+                ImageSource.gallery,
+                type,
+              ),
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: blackColor,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    10,
+                  ),
+                ),
+                child: GestureDetector(
+                  onTap: () => _showFullScreenImage(
+                    imageFile,
+                  ),
+                  child: imageFile != null
+                      ? Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                10,
+                              ),
+                              child: Image.file(
+                                imageFile,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: IconButton(
+                                onPressed: () {
+                                  Provider.of<ScreenTwoProvider>(context,
+                                          listen: false)
+                                      .deleteImage(type);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 30,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : GestureDetector(
+                          onTap: () => _getImage(ImageSource.gallery, type),
+                          child: Icon(Icons.add, size: 50, color: blackColor),
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final File imageFile;
+
+  const FullScreenImage({Key? key, required this.imageFile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Full Screen Image"),
+      ),
+      body: Center(
+        child: PhotoView(
+          imageProvider: FileImage(imageFile),
+          minScale: PhotoViewComputedScale.contained,
+          maxScale: PhotoViewComputedScale.covered * 2,
+          enableRotation: false,
+          backgroundDecoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+}
