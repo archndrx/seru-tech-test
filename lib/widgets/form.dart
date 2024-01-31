@@ -62,6 +62,7 @@ class CustomDropDownSearchForm extends StatelessWidget {
   final void Function(String?) onChanged;
 
   const CustomDropDownSearchForm({
+    super.key,
     required this.title,
     required this.items,
     required this.selectedItem,
