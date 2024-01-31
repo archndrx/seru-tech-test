@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seru_tech_test/provider/screen_one_provider.dart';
 import 'package:seru_tech_test/shared/theme.dart';
+import 'package:seru_tech_test/view/screen_two.dart';
 import 'package:seru_tech_test/widgets/buttons.dart';
 import 'package:seru_tech_test/widgets/form.dart';
 
@@ -146,7 +147,14 @@ class _ScreenOneState extends State<ScreenOne> {
             ),
             CustomFilledButton(
               title: 'Continue',
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ScreenTwo(),
+                  ),
+                );
+              },
             ),
             const SizedBox(
               height: 50,
