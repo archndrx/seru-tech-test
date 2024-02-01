@@ -25,6 +25,7 @@ class _ScreenOneState extends State<ScreenOne> {
   String _selectedSubDistrict = '';
   String _selectedVillage = '';
 
+  //VALIDASI FORM KOSONG
   bool validate() {
     if (firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||

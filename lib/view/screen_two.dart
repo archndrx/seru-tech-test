@@ -19,6 +19,7 @@ class ScreenTwo extends StatefulWidget {
 }
 
 class _ScreenTwoState extends State<ScreenTwo> {
+  // VALIADASI FORM KOSONG
   bool validate() {
     if (Provider.of<ScreenTwoProvider>(context, listen: false).selfieImage ==
             null ||
@@ -31,6 +32,7 @@ class _ScreenTwoState extends State<ScreenTwo> {
     return true;
   }
 
+  // NAVIGASI KE HALAMAN FULLSCREEN GAMBAR
   Future<void> _showFullScreenImage(File? imageFile) async {
     if (imageFile != null) {
       Navigator.push(
@@ -115,6 +117,7 @@ class _ScreenTwoState extends State<ScreenTwo> {
     );
   }
 
+  // IMAGE PREVIEW WIDGET
   Widget _buildImagePreview(String title, String type) {
     return Consumer<ScreenTwoProvider>(
       builder: (context, provider, child) {
@@ -207,6 +210,7 @@ class _ScreenTwoState extends State<ScreenTwo> {
   }
 }
 
+// HALAMAN FULLSCREEN GAMBAR & FITUR ZOOM IN/ZOOM OUT
 class FullScreenImage extends StatelessWidget {
   final File imageFile;
 

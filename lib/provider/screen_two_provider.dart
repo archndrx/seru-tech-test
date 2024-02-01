@@ -48,7 +48,7 @@ class ScreenTwoProvider extends ChangeNotifier {
       File imageFile = File(pickedFile.path);
       setImage(imageFile, type);
 
-      // Read text from KTP after setting the image
+      // MEMBACA TEXT DARI IMAGE KTP
       if (type == 'ktp') {
         await readTextFromKtp(imageFile);
       }
@@ -59,7 +59,7 @@ class ScreenTwoProvider extends ChangeNotifier {
     try {
       String result = await FlutterTesseractOcr.extractText(imageFile.path);
 
-      // Proses untuk mengekstrak NIK dari teks yang sudah ada
+      // EKSTRAK NIK DARI TEKS YANG ADA
       String nikCleaned = extractNikFromText(result);
 
       if (nikCleaned.isNotEmpty) {
@@ -71,12 +71,12 @@ class ScreenTwoProvider extends ChangeNotifier {
   }
 
   String extractNikFromText(String text) {
-    // Mencari pola NIK yang terdiri dari 16 digit
+    // MENCARI POLA NIK 16 DIGIT
     RegExp nikRegExp = RegExp(r'\b\d{16}\b');
     Match? nikMatch = nikRegExp.firstMatch(text);
 
     if (nikMatch != null) {
-      return nikMatch.group(0) ?? ''; // Mengambil nilai yang cocok
+      return nikMatch.group(0) ?? ''; // MENYESUAIKAN VALUE YANG COCOK
     } else {
       return '';
     }
