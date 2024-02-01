@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:seru_tech_test/model/user_model.dart';
 import 'package:seru_tech_test/provider/screen_one_provider.dart';
 import 'package:seru_tech_test/shared/theme.dart';
 import 'package:seru_tech_test/view/screen_two.dart';
@@ -14,6 +15,10 @@ class ScreenOne extends StatefulWidget {
 }
 
 class _ScreenOneState extends State<ScreenOne> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController biodataController = TextEditingController();
+
   String _selectedProvince = '';
   String _selectedDistrict = '';
   String _selectedSubDistrict = '';
@@ -48,18 +53,25 @@ class _ScreenOneState extends State<ScreenOne> {
               ),
               child: Column(
                 children: [
-                  const CustomFormField(title: 'First Name'),
+                  CustomFormField(
+                    title: 'First Name',
+                    controller: firstNameController,
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
-                  const CustomFormField(title: 'Last Name'),
+                  CustomFormField(
+                    title: 'Last Name',
+                    controller: lastNameController,
+                  ),
                   const SizedBox(
                     height: 16,
                   ),
-                  const CustomFormField(
+                  CustomFormField(
                     title: 'Biodata',
                     keyType: TextInputType.multiline,
                     minLines: 6,
+                    controller: biodataController,
                   ),
                   const SizedBox(
                     height: 16,
@@ -148,10 +160,21 @@ class _ScreenOneState extends State<ScreenOne> {
             CustomFilledButton(
               title: 'Continue',
               onPressed: () {
+                UserModel userData = UserModel(
+                  firstName: firstNameController.text,
+                  lastName: lastNameController.text,
+                  biodata: biodataController.text,
+                  province: _selectedProvince,
+                  district: _selectedDistrict,
+                  subDistrict: _selectedSubDistrict,
+                  village: _selectedVillage,
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ScreenTwo(),
+                    builder: (context) => ScreenTwo(
+                      data: userData,
+                    ),
                   ),
                 );
               },
