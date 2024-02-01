@@ -1,16 +1,20 @@
-# seru_tech_test
+# Flutter Wizard Tech Test
 
-A new Flutter project.
+## Dependencies
 
-## Getting Started
+- google_fonts: ^6.1.0
+- dropdown_search: ^5.0.6
+- http: ^1.2.0
+- provider: ^6.1.1
+- image_picker: ^1.0.7
+- photo_view: ^0.14.0
+- flutter_tesseract_ocr: ^0.4.24
+- another_flushbar: ^1.12.30
 
-This project is a starting point for a Flutter application.
+## API Wilayah
 
-A few resources to get you started if this is your first Flutter project:
+<https://api.wilayah.anmediacorp.com/>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Build APK
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<https://drive.google.com/file/d/1X2HWII_oY_fwYT4BD1c4QGWHHVINzYm7/view?usp=sharing>
