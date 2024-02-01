@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_tesseract_ocr/android_ios.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:seru_tech_test/model/user_model.dart';
 import 'package:seru_tech_test/provider/screen_two_provider.dart';
+import 'package:seru_tech_test/shared/shared_method.dart';
 import 'package:seru_tech_test/shared/theme.dart';
 import 'package:seru_tech_test/view/screen_three.dart';
 import 'package:seru_tech_test/widgets/buttons.dart';
@@ -19,7 +19,17 @@ class ScreenTwo extends StatefulWidget {
 }
 
 class _ScreenTwoState extends State<ScreenTwo> {
-  String nik = '';
+  bool validate() {
+    if (Provider.of<ScreenTwoProvider>(context, listen: false).selfieImage ==
+            null ||
+        Provider.of<ScreenTwoProvider>(context, listen: false).ktpImage ==
+            null ||
+        Provider.of<ScreenTwoProvider>(context, listen: false).freeImage ==
+            null) {
+      return false;
+    }
+    return true;
+  }
 
   Future<void> _showFullScreenImage(File? imageFile) async {
     if (imageFile != null) {
@@ -29,49 +39,6 @@ class _ScreenTwoState extends State<ScreenTwo> {
           builder: (context) => FullScreenImage(imageFile: imageFile),
         ),
       );
-    }
-  }
-
-  Future<void> _getImage(ImageSource source, String type) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-
-    if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
-      Provider.of<ScreenTwoProvider>(context, listen: false)
-          .setImage(imageFile, type);
-
-      // Read text from KTP after setting the image
-      if (type == 'ktp') {
-        await _readTextFromKtp(imageFile);
-      }
-    }
-  }
-
-  Future<void> _readTextFromKtp(File imageFile) async {
-    try {
-      String result = await FlutterTesseractOcr.extractText(imageFile.path);
-
-      // Proses untuk mengekstrak NIK dari teks yang sudah ada
-      String nikCleaned = _extractNikFromText(result);
-
-      if (nikCleaned.isNotEmpty) {
-        nik = nikCleaned;
-        setState(() {});
-      } else {}
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  String _extractNikFromText(String text) {
-    // Mencari pola NIK yang terdiri dari 16 digit
-    RegExp nikRegExp = RegExp(r'\b\d{16}\b');
-    Match? nikMatch = nikRegExp.firstMatch(text);
-
-    if (nikMatch != null) {
-      return nikMatch.group(0) ?? ''; // Mengambil nilai yang cocok
-    } else {
-      return '';
     }
   }
 
@@ -110,28 +77,34 @@ class _ScreenTwoState extends State<ScreenTwo> {
           CustomFilledButton(
             title: 'Continue',
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ScreenThree(
-                    data: widget.data.copyWith(
-                      selfieUrl:
-                          Provider.of<ScreenTwoProvider>(context, listen: false)
-                              .selfieImage
-                              ?.path,
-                      ktpUrl:
-                          Provider.of<ScreenTwoProvider>(context, listen: false)
-                              .ktpImage
-                              ?.path,
-                      fotobebasUrl:
-                          Provider.of<ScreenTwoProvider>(context, listen: false)
-                              .freeImage
-                              ?.path,
-                      nik: nik,
+              if (validate()) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ScreenThree(
+                      data: widget.data.copyWith(
+                        selfieUrl: Provider.of<ScreenTwoProvider>(context,
+                                listen: false)
+                            .selfieImage
+                            ?.path,
+                        ktpUrl: Provider.of<ScreenTwoProvider>(context,
+                                listen: false)
+                            .ktpImage
+                            ?.path,
+                        fotobebasUrl: Provider.of<ScreenTwoProvider>(context,
+                                listen: false)
+                            .freeImage
+                            ?.path,
+                        nik: Provider.of<ScreenTwoProvider>(context,
+                                listen: false)
+                            .nik,
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              } else {
+                showCustomSnackbar(context, 'Semua Field Harus Diisi');
+              }
             },
           ),
           const SizedBox(
@@ -172,10 +145,7 @@ class _ScreenTwoState extends State<ScreenTwo> {
               height: 8,
             ),
             GestureDetector(
-              onTap: () => _getImage(
-                ImageSource.gallery,
-                type,
-              ),
+              onTap: () => provider.getImage(ImageSource.gallery, type),
               child: Container(
                 height: 200,
                 width: double.infinity,
@@ -222,7 +192,8 @@ class _ScreenTwoState extends State<ScreenTwo> {
                           ],
                         )
                       : GestureDetector(
-                          onTap: () => _getImage(ImageSource.gallery, type),
+                          onTap: () =>
+                              provider.getImage(ImageSource.gallery, type),
                           child: Icon(Icons.add, size: 50, color: blackColor),
                         ),
                 ),
