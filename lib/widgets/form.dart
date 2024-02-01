@@ -88,7 +88,17 @@ class CustomDropDownSearchForm extends StatelessWidget {
           items: items,
           onChanged: onChanged,
           selectedItem: selectedItem,
+          popupProps: const PopupProps.menu(
+            constraints: BoxConstraints(maxHeight: 200),
+            showSelectedItems: true,
+            listViewProps: ListViewProps(),
+            searchFieldProps: TextFieldProps(),
+            showSearchBox: true,
+            menuProps: MenuProps(),
+            searchDelay: Duration(seconds: 0),
+          ),
           dropdownDecoratorProps: DropDownDecoratorProps(
+            textAlignVertical: TextAlignVertical.center,
             dropdownSearchDecoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),
               border: OutlineInputBorder(
